@@ -6,7 +6,7 @@ import seaborn as sns
 df = pd.read_csv('Sample_Weather_Data.csv')
 
 ## dataframe properties / func
-##-----------------
+##------------------
 df.shape
 df.columns
 df.info()
