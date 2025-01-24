@@ -49,7 +49,18 @@ df_high_earn['married'] = df_high_earn['marital-status'].apply(lambda x: 1 if x[
 # 'price_category' is new col. 
 
 df['new'] = df.apply(lambda x: 1 if x['col1'] == x['col2'] else 0, axis=1) # similar to excel comarison b/w 2 cols.
-###-------------------------------------------------------
+###--  another way of implementation     -----------------------------------------------------
+for dataset in flights:
+    flights.loc[flights['ArrDelay'] <= 15, 'Status'] = 0
+    flights.loc[flights['ArrDelay'] >= 15, 'Status'] = 1
+    flights.loc[flights['ArrDelay'] >= 60, 'Status'] = 2
+    flights.loc[flights['Diverted'] == 1, 'Status'] = 3
+    flights.loc[flights['Cancelled'] == 1, 'Status'] = 4
+# Status is new col..#Status represents wether the flight was on time (0), slightly delayed (1), 
+# highly delayed (2), diverted (3), or cancelled (4) 
+
+
+########################################
 
 ########################################
         # Graph Plot
@@ -88,7 +99,8 @@ df["International plan"] = df["International plan"].map(d)
 
 pd.crosstab(df["Churn"], df["International plan"],normalize=True,margins=True) ## margin gives subtotal
 
-
+#### merge data frames
+res = pd.merge(df, df1, how='left', on=['key', 'key1'])
 
 
 
