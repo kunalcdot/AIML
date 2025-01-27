@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 
-def ParseNCreatedf(r):
+def ParseNCreatedf(r,Stock_name):
 	# parse the screener web page and extract financial data to create a Data frame
 	soup = BeautifulSoup(r.text, "html.parser")
 	PnL_table = soup.find("section", id="profit-loss").find('table')
@@ -62,7 +62,7 @@ def ParseNCreatedf(r):
 	CFI_num_arr = []
 	CFF_num_arr = []
 	
-	Stock_name = 'ASIANPAINT'
+	# Stock_name = 'ASIANPAINT'
 	no_of_yrs = len(heading)
 	
 	for i in range(0,(no_of_yrs-1)):
