@@ -1,6 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import sys
+import time
 
 def ParseNCreatedf(r,Stock_name):
 	# parse the screener web page and extract financial data to create a Data frame
@@ -123,20 +125,125 @@ def ParseNCreatedf(r,Stock_name):
 	return df
 				
 
+    
+    
+    
+    
+def download_stock_data(stock_name_arr,ip_df):
+       ## run a loop as per input stock name array
+       ## return a combined Dataframe and an array of stock for which it failed
+       ## ip_df is supplied.. output_df will be concatination
+       
+    error_stock = []
+    
+    combined_df = ip_df
+    for stock in stock_name_arr:
+        # print("\n")
+        print(stock)
+        
+        url = 'https://www.screener.in/company/'+stock+'/consolidated/'
+        
+        # time.sleep(0.1)
+        r = requests.get(url)
+        try:
+            df = ParseNCreatedf(r,stock)
+            
+            combined_df = pd.concat([combined_df,df], ignore_index=True)
+            
+        except:
+            print("Error in stock :"+stock)
+            print("Wait 2second")
+            error_stock.append(stock)
+            time.sleep(2)
+            
+    return [combined_df,error_stock]        
+            
+            
+            
+def GetFinData(file_name):
+    # Get the financial data of list of stock given in the csv file
+    
+    stock_df = pd.read_csv(file_name)
+    print(stock_df.columns)
+    
+    stock_df10 = stock_df.head(100)
+    NSE_stock_list = stock_df10['Symbol']
+    
+    # CREATE A DUMMY df
+    stock = 'WONDERLA'
+    r = requests.get('https://www.screener.in/company/'+stock+'/consolidated/')
+    df = ParseNCreatedf(r,stock)
+    
+    max_retry_count = 3
+    retry_count = 0
+    
+    while 1:
+        [combined_df,error_stocks] = download_stock_data(NSE_stock_list,df)
+        
+        if (len(error_stocks)):
+            print("Number of error stocks = "+str(len(error_stocks)))
+            print(error_stocks)
+            
+            df = combined_df
+            NSE_stock_list = error_stocks
+            
+            if retry_count == max_retry_count:
+                break
+            
+            retry_count += 1
+            print("\nRetry No......"+str(retry_count))
+            time.sleep(5)
+            
+        
+        else:
+            print('Else block-->>')
+            break
+    
+    print(combined_df)
+    
+    
+    combined_df.to_csv('stock_data.csv')
+    
+    ### debugging
+    
+    # find missing stocks
+    
+    
+    target_list = NSE_stock_list 
+                        
+    output_list = combined_df['Stock Name'].unique()
+    print(combined_df['Stock Name'].nunique())
+    print(stock_df10['Symbol'].nunique())
+    
+    
+    print(set(target_list).difference(set(output_list)))
+
+
 #------------------------------main func ----------------------------------	
 if __name__ == "__main__":
 # nra_init(nra)
 
     # timedata = time.time()
     msg = ("****************************************************************************\n")
-
-    r = requests.get('https://www.screener.in/company/ASIANPAINT/consolidated/')
-    df = ParseNCreatedf(r)
-    print(df)
-    print(df.info())
-    df.to_csv('stock_data.csv')
-
-
+    print(msg)
+    # stock = 'WIPRO'
+    # url = 'https://www.screener.in/company/'+stock+'/consolidated/'
+        
+    # r = requests.get(url)
+        
+    
+    # df = ParseNCreatedf(r,stock)
+    # print(df)
+    # df.to_csv('stock_data.csv')
+    
+    # sys.exit(0)
+    
+    file_name = 'NSE_stocks_Dec2024.csv'
+    # file_name = 'NSE_temp1.csv'
+    GetFinData(file_name)
+    
+    sys.exit(0)
+    
 
 
 
