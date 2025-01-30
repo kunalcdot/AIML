@@ -135,7 +135,7 @@ def download_stock_data(stock_name_arr,ip_df):
        ## ip_df is supplied.. output_df will be concatination
        
     error_stock = []
-    
+    er = 0
     combined_df = ip_df
     for stock in stock_name_arr:
         # print("\n")
@@ -152,9 +152,29 @@ def download_stock_data(stock_name_arr,ip_df):
             
         except:
             print("Error in stock :"+stock)
-            print("Wait 2second")
             error_stock.append(stock)
-            time.sleep(2)
+            
+            if er < 5:
+                
+                print("Wait 2second")
+                time.sleep(2)
+                
+            elif er < 10:
+                
+                print("Wait 4second")
+                time.sleep(4)
+            
+            elif er < 20:
+                
+                print("Wait 6second")
+                time.sleep(6)
+            else:
+                print("Wait 10second")
+                time.sleep(10)
+                er = 0
+            er += 1
+            
+            
             
     return [combined_df,error_stock]        
             
@@ -166,7 +186,7 @@ def GetFinData(file_name):
     stock_df = pd.read_csv(file_name)
     print(stock_df.columns)
     
-    stock_df10 = stock_df.head(100)
+    stock_df10 = stock_df.head(500)
     NSE_stock_list = stock_df10['Symbol']
     
     # CREATE A DUMMY df
@@ -174,7 +194,7 @@ def GetFinData(file_name):
     r = requests.get('https://www.screener.in/company/'+stock+'/consolidated/')
     df = ParseNCreatedf(r,stock)
     
-    max_retry_count = 3
+    max_retry_count = 10
     retry_count = 0
     
     while 1:
