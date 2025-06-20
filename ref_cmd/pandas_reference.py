@@ -103,6 +103,12 @@ pd.crosstab(df["Churn"], df["International plan"],normalize=True,margins=True) #
 res = pd.merge(df, df1, how='left', on=['key', 'key1'])
 
 
+##### get dummies (one-hot encoding)
+df_new = pd.get_dummies(df, prefix=None, prefix_sep='_', dummy_na=False, columns=['col1','col2'], drop_first=True, dtype=None)
+# instead of df, df['col'] can be passed in argument like a series, then only that series will be used in encoding
+
+
+
 
 
 
