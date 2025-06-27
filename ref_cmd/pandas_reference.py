@@ -107,11 +107,46 @@ res = pd.merge(df, df1, how='left', on=['key', 'key1'])
 df_new = pd.get_dummies(df, prefix=None, prefix_sep='_', dummy_na=False, columns=['col1','col2'], drop_first=True, dtype=None)
 # instead of df, df['col'] can be passed in argument like a series, then only that series will be used in encoding
 
+def EDA_plot():
+    # dfdf
+    # fdf
+    fig, axs = plt.subplots(2, 2, figsize=(10, 8))
 
+    # Flatten axes array for easier indexing
+    axs = axs.flatten()
+    sns.histplot(df['sepal_length'], ax=axs[0], kde=True)
 
+    axs[0, 0].plot([1, 2, 3], [1, 4, 9])
+    # Adjust layout
+    plt.tight_layout()
+    plt.show()
 
+    ## example ##
+    fig, axs = plt.subplots(2, 2, figsize=(8,8))
 
+    # Flatten axes array for easier indexing
+    axs = axs.flatten()
 
+    sns.countplot(data=df1,x='p_class',hue='survived', ax=axs[0])
+    axs[0].set_title('Passenger Class vs survived')
+    axs[0].set_xlabel('Passenger Class')
+    axs[0].set_ylabel('Count')
 
+    sns.histplot(data=df1, x='age',kde=True,ax=axs[1])
+    axs[1].set_title('Distribution of Age')
+    axs[1].set_xlabel('Age')
+    axs[1].set_ylabel('Count')
+
+    sns.histplot(data=df1, x='fare',kde=True,ax=axs[2])
+    axs[2].set_title('Distribution of Fare')
+    axs[2].set_xlabel('Fare')
+    axs[2].set_ylabel('Count')
+
+    axs[3].pie(df1['sex'].value_counts(), labels = df1['sex'].value_counts().index, autopct='%1.1f%%', startangle=90)
+    axs[3].set_title('Distribution of Sex')
+    # plt.title('Distribution of Sex')
+
+    plt.tight_layout()
+    plt.show()
 
 
